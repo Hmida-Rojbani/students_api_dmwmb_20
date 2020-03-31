@@ -1,0 +1,11 @@
+const mongoose = require('mongoose');
+
+const student_schema = new Schema({
+    name : {type: String, require : true},
+    age : Number,
+    email : {type: String,require:true, unique :true}
+});
+
+const Student = mongoose.model('Student', student_schema);
+
+exports.Student = Student;
