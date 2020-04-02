@@ -46,6 +46,61 @@ router.post('',async (req,res)=>{
 })
 
 
+router.delete('/id/:id',async (req,res)=>{
+    let results = id_not_valid_fun(req.params);
+    if(results)
+        return res.status(400).send(results.details[0].message);
+    const student = await Student.findByIdAndRemove(req.params.id);
+    if(!student)
+        return res.status(204).end();
+    res.send(student);
+})
+
+router.delete('/name/:name',async (req,res)=>{
+    let results = student_not_valid_opt_fun(req.params);
+    if(results)
+        return res.status(400).send(results.details[0].message);
+    const student = await Student.findOneAndRemove({name:req.params.name});
+    if(!student)
+        return res.status(204).end();
+    res.send(student);
+})
+
+router.delete('/all/name/:name',async (req,res)=>{
+    let results = student_not_valid_opt_fun(req.params);
+    if(results)
+        return res.status(400).send(results.details[0].message);
+    let student = { id:1};
+    try{
+        while(student)
+        student = await Student.findOneAndRemove({name:req.params.name});
+    }catch(ex){
+        res.send(`Error : ${ex.message}`);
+    }
+    
+    res.send('All Student with this name are removed');
+})
+
+
+router.put('/id/:id',async (req,res)=>{
+    let results = id_not_valid_fun(req.params);
+    if(results)
+        return res.status(400).send(results.details[0].message);
+    let student = await Student.findById(req.params.id);
+    if(!student)
+        return res.status(404).send(`Student with this id is missing`)
+    results = student_not_valid_opt_fun(req.body);
+    if(results)
+        return res.status(400).send(results.details[0].message);
+    student = _.merge(student,req.body);
+    try{
+        const saved_student = await student.save();
+        res.status(200).send(saved_student);
+    }catch(err){
+        res.status(400).send(`Error : ${err.message}`);
+    }
+    
+})
 
 
 
