@@ -19,7 +19,10 @@ student_validator = {
 student_opt_validator = {
     name : Joi.string().min(3),
     age: Joi.number().positive(),
+    min_age: Joi.number().positive(),
+    max_age: Joi.number().positive(),
     email: Joi.string().email()
+    
 };
 
 id_validator = {

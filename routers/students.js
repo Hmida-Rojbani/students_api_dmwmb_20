@@ -102,6 +102,30 @@ router.put('/id/:id',async (req,res)=>{
     
 })
 
+//count for exacte age
+
+router.get('/count/age/:age',async (req,res)=>{
+    let results = student_not_valid_opt_fun(req.params);
+    if(results)
+        return res.status(400).send(results.details[0].message);
+    
+    let students = await Student.find({age:req.params.age});
+
+    res.send(`Number of students with age = ${req.params.age} is ${students.length}`);
+});
+
+//count for  age between two numbers
+
+router.get('/count/age/min/:min_age/max/:max_age',async (req,res)=>{
+    let results = student_not_valid_opt_fun(req.params);
+    if(results)
+        return res.status(400).send(results.details[0].message);
+    
+    let students = await Student.find({age: {$gte: req.params.min_age, $lte: req.params.max_age }});
+
+    res.send(`Number of students with age between given interval is ${students.length}`);
+});
+
 
 
 module.exports = router;
