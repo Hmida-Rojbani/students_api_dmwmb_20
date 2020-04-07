@@ -1,6 +1,7 @@
 
 const router = require('express').Router();
 const { Student, student_not_valid_fun, id_not_valid_fun, student_not_valid_opt_fun } = require('../models/student');
+const { ClassRoom } = require('../models/class_room');
 const _ = require('lodash');
 
 
@@ -35,10 +36,19 @@ router.post('',async (req,res)=>{
     let results = student_not_valid_fun(req.body);
     if(results)
         return res.status(400).send(results.details[0].message);
-    const student = new Student(_.pick(req.body,['name','age','email']));
+    const student = new Student(_.pick(req.body,['name','age','email','extra_price','class_room']));
     try{
-        const saved_student = await student.save();
-        res.status(201).send(saved_student);
+        const class_room = await ClassRoom.findById(student.class_room.class_id);
+        
+        if(class_room && class_room.name === student.class_room.name) {
+            const saved_student = await student.save();
+            class_room.nb_student += 1;
+            await class_room.save();
+            res.status(201).send(saved_student);
+        }else{
+            return res.status(400).send(`ClassRoom not found for the given ID or name of the class is diffrent.`)
+        }
+        
     }catch(err){
         res.status(400).send(`Error : ${err.message}`);
     }
@@ -126,12 +136,7 @@ router.get('/count/age/min/:min_age/max/:max_age',async (req,res)=>{
     res.send(`Number of students with age between given interval is ${students.length}`);
 });
 
-// add attribut ll schema student extraprice
-// extraprice required if the student age >25
 
-// collection classRoom with hybrid format
-// classRoom : { name, nb students, modules:[String]}
 
-//change the validation with the new rules
 
 module.exports = router;
