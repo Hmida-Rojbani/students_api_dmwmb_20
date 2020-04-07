@@ -126,6 +126,12 @@ router.get('/count/age/min/:min_age/max/:max_age',async (req,res)=>{
     res.send(`Number of students with age between given interval is ${students.length}`);
 });
 
+// add attribut ll schema student extraprice
+// extraprice required if the student age >25
 
+// collection classRoom with hybrid format
+// classRoom : { name, nb students, modules:[String]}
+
+//change the validation with the new rules
 
 module.exports = router;
