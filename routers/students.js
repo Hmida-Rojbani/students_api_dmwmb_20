@@ -63,6 +63,10 @@ router.delete('/id/:id',async (req,res)=>{
     const student = await Student.findByIdAndRemove(req.params.id);
     if(!student)
         return res.status(204).end();
+    //dec nm of student in class room
+    const class_room = await ClassRoom.findById(student.class_room.class_id);
+    class_room.nb_student -= 1;
+    await class_room.save();
     res.send(student);
 })
 
@@ -73,6 +77,10 @@ router.delete('/name/:name',async (req,res)=>{
     const student = await Student.findOneAndRemove({name:req.params.name});
     if(!student)
         return res.status(204).end();
+    //dec nm of student in class room
+    const class_room = await ClassRoom.findById(student.class_room.class_id);
+    class_room.nb_student -= 1;
+    await class_room.save();
     res.send(student);
 })
 
@@ -81,19 +89,25 @@ router.delete('/all/name/:name',async (req,res)=>{
     if(results)
         return res.status(400).send(results.details[0].message);
     let student = { id:1};
+
     try{
-        while(student)
+        while(student){
         student = await Student.findOneAndRemove({name:req.params.name});
+        const class_room = await ClassRoom.findById(student.class_room.class_id);
+        class_room.nb_student -= 1;
+        await class_room.save();
+        }
     }catch(ex){
         res.send(`Error : ${ex.message}`);
     }
-    
     res.send('All Student with this name are removed');
 })
 
 
 router.put('/id/:id',async (req,res)=>{
     let results = id_not_valid_fun(req.params);
+    var old_class_room_id; 
+    var class_room;
     if(results)
         return res.status(400).send(results.details[0].message);
     let student = await Student.findById(req.params.id);
@@ -102,9 +116,25 @@ router.put('/id/:id',async (req,res)=>{
     results = student_not_valid_opt_fun(req.body);
     if(results)
         return res.status(400).send(results.details[0].message);
+    if(req.body.class_room.class_id){
+        
+        old_class_room_id = student.class_room.class_id;
+        class_room = await ClassRoom.findById(req.body.class_room.class_id);
+        if(!class_room)
+        return res.status(400).send(`ClassRoom not found for the given ID`);
+
+    }
+
     student = _.merge(student,req.body);
     try{
+        student.class_room.name=class_room.name;
         const saved_student = await student.save();
+        class_room.nb_student += 1;
+        await class_room.save();
+        //dec nm of student in class room
+        class_room = await ClassRoom.findById(old_class_room_id);
+        class_room.nb_student -= 1;
+        await class_room.save();
         res.status(200).send(saved_student);
     }catch(err){
         res.status(400).send(`Error : ${err.message}`);
