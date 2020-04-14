@@ -11,6 +11,8 @@ const app = express();
 const student_router = require('./routers/students');
 const class_room_router = require('./routers/class_rooms');
 const user_router = require('./routers/users');
+require('express-async-errors')
+const error = require('./middelwares/error')
 
 
 appDebug('Application name : '+config.get('Application_Name'))
@@ -20,5 +22,6 @@ app.use(express.json());
 app.use('/api/students',student_router);
 app.use('/api/class_rooms',class_room_router);
 app.use('/api/users',user_router);
+app.use(error);
 
 app.listen(port,()=> appDebug(`Application is Running on ${port}`))

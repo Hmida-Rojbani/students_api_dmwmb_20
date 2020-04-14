@@ -7,5 +7,6 @@ module.exports = async function connectionToMongo(url){
         mongoDebug('Mongo is Up.');
     }catch(err){
         mongoDebug(`Mongo is Down. Raison : ${err.message}`);
+        process.exit(0);
     }
 }
