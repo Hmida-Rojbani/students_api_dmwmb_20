@@ -1,0 +1,8 @@
+{
+    "db" : {
+        "protocole" : "mongodb+srv://",
+        "user" : "user:",
+        "path": "@mongoformation-xc16w.mongodb.net/",
+        "name" : "dmwmB?retryWrites=true&w=majority"
+    }
+}

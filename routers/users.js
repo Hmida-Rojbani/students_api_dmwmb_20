@@ -3,6 +3,7 @@ const { User , user_validate_fun, user_login_validate_fun } = require('../models
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
+const config = require('config')
 
 
 router.get('', async (req,res)=>{
@@ -46,7 +47,7 @@ router.get('/me',async (req,res)=>{
     if(!token)
         return res.status(401).send('Access denied. No token provided');
     try{
-    var decoded_payload = jwt.verify(token,'1234');
+    var decoded_payload = jwt.verify(token,config.get('jwtPrivateKey'));
     }catch(err){
         return res.status(400).send('Invalid Token')
     }
