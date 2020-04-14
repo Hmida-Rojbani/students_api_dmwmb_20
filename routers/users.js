@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { User , user_validate_fun, user_login_validate_fun } = require('../models/user');
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 
 router.get('', async (req,res)=>{
@@ -32,13 +33,27 @@ router.post('/login', async (req,res)=>{
 
     let user = await User.findOne({email: user_login.username});
 
-    if(user && await bcrypt.compare(user_login.password,user.password))
-        return res.send('User logged')
+    if(!(user && await bcrypt.compare(user_login.password,user.password)))
+        return res.status(400).send('Username or Password are incorrects');
     
-    res.status(400).send('Username or Password are incorrects');
+        const token = user.generateAuthToken();
+        res.header('x-auth-token','Bearer '+token).send('User logged : '+ user.email);
     
 });
 
+router.get('/me',async (req,res)=>{
+    const token = req.header('x-auth-token');
+    if(!token)
+        return res.status(401).send('Access denied. No token provided');
+    try{
+    var decoded_payload = jwt.verify(token,'1234');
+    }catch(err){
+        return res.status(400).send('Invalid Token')
+    }
+
+    const user = await User.findById(decoded_payload._id).select('-password');
+    res.send(user);
+})
 
 
 module.exports = router;
