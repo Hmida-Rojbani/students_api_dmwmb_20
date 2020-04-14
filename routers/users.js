@@ -2,8 +2,7 @@ const router = require('express').Router();
 const { User , user_validate_fun, user_login_validate_fun } = require('../models/user');
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
-const config = require('config')
+const auth = require('../middelwares/auth')
 
 
 router.get('', async (req,res)=>{
@@ -42,17 +41,8 @@ router.post('/login', async (req,res)=>{
     
 });
 
-router.get('/me',async (req,res)=>{
-    const token = req.header('x-auth-token');
-    if(!token)
-        return res.status(401).send('Access denied. No token provided');
-    try{
-    var decoded_payload = jwt.verify(token,config.get('jwtPrivateKey'));
-    }catch(err){
-        return res.status(400).send('Invalid Token')
-    }
-
-    const user = await User.findById(decoded_payload._id).select('-password');
+router.get('/me',auth,async (req,res)=>{
+    const user = await User.findById(req.user_token._id).select('-password');
     res.send(user);
 })
 

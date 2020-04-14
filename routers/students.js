@@ -3,6 +3,7 @@ const router = require('express').Router();
 const { Student, student_not_valid_fun, id_not_valid_fun, student_not_valid_opt_fun } = require('../models/student');
 const { ClassRoom } = require('../models/class_room');
 const _ = require('lodash');
+const auth = require('../middelwares/auth')
 
 
 router.get('',async (req,res)=>{
@@ -32,7 +33,7 @@ router.get('/name/:name',async (req,res)=>{
     res.send(student);
 })
 
-router.post('',async (req,res)=>{
+router.post('',auth,async (req,res)=>{
     let results = student_not_valid_fun(req.body);
     if(results)
         return res.status(400).send(results.details[0].message);
