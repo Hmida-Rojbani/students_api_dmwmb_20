@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set DEBUG=app*&&node index.js"
+    "start": "set DEBUG=app*&&nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,7 @@
     "express": "^4.17.1",
     "joi": "^14.3.1",
     "joi-objectid": "^3.0.1",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.9.7",
     "morgan": "^1.10.0"
