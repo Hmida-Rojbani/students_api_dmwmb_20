@@ -4,6 +4,7 @@ const { Student, student_not_valid_fun, id_not_valid_fun, student_not_valid_opt_
 const { ClassRoom } = require('../models/class_room');
 const _ = require('lodash');
 const auth = require('../middelwares/auth')
+const autoris = require('../middelwares/autoris')
 
 
 router.get('',async (req,res)=>{
@@ -57,7 +58,7 @@ router.post('',auth,async (req,res)=>{
 })
 
 
-router.delete('/id/:id',async (req,res)=>{
+router.delete('/id/:id',[auth,autoris],async (req,res)=>{
     let results = id_not_valid_fun(req.params);
     if(results)
         return res.status(400).send(results.details[0].message);
@@ -105,7 +106,7 @@ router.delete('/all/name/:name',async (req,res)=>{
 })
 
 
-router.put('/id/:id',async (req,res)=>{
+router.put('/id/:id',auth,async (req,res)=>{
     let results = id_not_valid_fun(req.params);
     var old_class_room_id; 
     var class_room;
