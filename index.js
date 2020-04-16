@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+require('express-async-errors')
 const appDebug = require('debug')('app:debug');
 const config = require('config');
 const url_db = config.get('db.protocole')+config.get('db.user')
@@ -11,11 +11,25 @@ const app = express();
 const student_router = require('./routers/students');
 const class_room_router = require('./routers/class_rooms');
 const user_router = require('./routers/users');
-require('express-async-errors')
 const error = require('./middelwares/error')
 
+//throw new Error('Something failed during startup.');
+//we can handel it with the following code
+process.on('uncaughtException',(ex)=>{
+    appDebug('We got an uncaught exception : '+ex.message);
+    process.exit(1);
+});
 
+//const p = Promise.reject(new Error('Something failed miserably! .'));
+//we can handel it with the following code
+process.on('unhandledRejection',(ex)=>{
+    appDebug('We got an unhandled rejection : '+ex.message);
+    process.exit(2);
+});
 appDebug('Application name : '+config.get('Application_Name'))
+
+
+
 
 app.use(morgan('dev'));
 app.use(express.json());

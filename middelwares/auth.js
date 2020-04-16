@@ -7,7 +7,7 @@ module.exports = function (req,res,next) {
     if(!token)
         return res.status(401).send('Access denied. No token provided');
     try{
-    var decoded_payload = jwt.verify(token,config.get('jwtPrivateKey'));
+    var decoded_payload = jwt.verify(token.substring(7),config.get('jwtPrivateKey'));
     req.user_token=decoded_payload;
     next();
     }catch(err){
