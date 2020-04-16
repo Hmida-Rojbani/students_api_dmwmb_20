@@ -11,35 +11,30 @@ const app = express();
 const student_router = require('./routers/students');
 const class_room_router = require('./routers/class_rooms');
 const user_router = require('./routers/users');
-const error = require('./middelwares/error')
-const winston = require('winston')
+const error = require('./middelwares/error');
+const winston = require('winston');
+require('winston-mongodb');
 
-// we add file to handle expressexceptions
+
+// we add looging into files of expressexceptions
 winston.add(winston.transports.File,{filename:'loggers/logfile.log'});
 
-//throw new Error('Something failed during startup.');
-//we can handel it with the following code
-// process.on('uncaughtException',(ex)=>{
-//     appDebug('We got an uncaught exception : '+ex.message);
-//     winston.error(ex.message,ex);
-//     process.exit(1);
-// });
-//log of internal Errors
-winston.handleExceptions(new winston.transports.File({filename:'loggers/uncaughtException.log'}))
+// we add looging into mongodb of expressexceptions
+//winston.add(winston.transports.MongoDB,{db:'mongodb://localhost/dmwmb_logger', level :'error'});
 
+
+winston.handleExceptions(new winston.transports.File({filename:'loggers/uncaughtException.log'}))
+//winston.handleExceptions(new winston.transports.MongoDB({db:'mongodb://localhost/dmwmb_logger', level :'error'}))
 process.on('unhandledRejection',(ex)=>{
     throw ex;
 });
 
-//const p = Promise.reject(new Error('Something failed miserably! .'));
-//we can handel it with the following code
-// process.on('unhandledRejection',(ex)=>{
-//     appDebug('We got an unhandled rejection : '+ex.message);
-//     process.exit(2);
-// });
 appDebug('Application name : '+config.get('Application_Name'))
 
 
+if(!config.get('jwtPrivateKey') || !config.get('db.password') ){
+    throw new Error('FATAL ERROR: some secret env varibales are not defined');
+}
 
 
 app.use(morgan('dev'));
