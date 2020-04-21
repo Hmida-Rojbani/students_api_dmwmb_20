@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll --verbose --coverage",
     "start": "set DEBUG=app*&&set dbPass=1234&& set secret_jwtPrivateKey=1234&&nodemon index.js"
   },
   "keywords": [],
