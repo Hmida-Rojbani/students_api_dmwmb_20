@@ -8,7 +8,7 @@ const autoris = require('../middelwares/autoris')
 
 
 router.get('',async (req,res)=>{
-    throw new Error('Something failed during startup.');
+    //throw new Error('Something failed during startup.');
     const students = await Student.find().populate('class_room.class_id','modules -_id');
     if(students.length === 0)
         return res.status(204).end();
