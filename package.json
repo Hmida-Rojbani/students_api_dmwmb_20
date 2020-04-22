@@ -7,8 +7,11 @@
     "test": "jest --watchAll --verbose --coverage",
     "start": "node index.js"
   },
+  "engines": {
+    "node": "12.0.0"
+  },
   "keywords": [],
-  "author": "",
+  "author": "Hmida Rojbani",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^4.0.1",
